@@ -4,6 +4,6 @@
 
 export class App {
     constructor() {
-        this.heading = "Hello, World!";
+        this.heading = "Hello, World! Nice to see you!";
     }
 }
