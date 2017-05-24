@@ -1,3 +1,29 @@
 <template>
     <h1>${heading}</h1>
+    <require from="./canvas-to-url"></require>
+    <require from="./blob-to-url"></require>
+    <div id="settings">
+        <h2>Settings</h2>
+        <form>
+            <label>Source File</label>
+            <input type="file" files.bind="selectedFiles">
+            <label>Population Count</label>
+            <input type="number" value.bind="popCount">
+            <button type="submit" click.delegate="onStartTraining()">Start</button>
+            <button type="submit" click.delegate="onStopTraining()">Stop</button>
+        </form>
+    </div>
+    <div>
+        <h2>Compression</h2>
+        <img id="source_image" src.bind="sourceImage | canvasToUrl">
+        <img id="current_best">
+        <ul>
+            <li repeat.for="image of images">
+                <label>Image ${$index}</label>
+                <img src.bind="image.canvas | canvasToUrl">
+                <h3>${image.dumpFormula ()}</h3>
+            </li>
+        </ul>
+    </div>
+    <!--<img src.bind="URL.createObjectURL(selectedFiles.item(0))" width="128" height="128">-->
 </template>
