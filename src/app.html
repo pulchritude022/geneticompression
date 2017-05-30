@@ -1,29 +1,30 @@
 <template>
-    <h1>${heading}</h1>
-    <require from="./canvas-to-url"></require>
-    <require from="./blob-to-url"></require>
-    <div id="settings">
-        <h2>Settings</h2>
-        <form>
-            <label>Source File</label>
-            <input type="file" files.bind="selectedFiles">
-            <label>Population Count</label>
-            <input type="number" value.bind="popCount">
-            <button type="submit" click.delegate="onStartTraining()">Start</button>
-            <button type="submit" click.delegate="onStopTraining()">Stop</button>
-        </form>
+  <require from="bootstrap/css/bootstrap.css"></require>
+  <require from="./bootstrap.min.css"></require>
+  <require from="./style.css"></require>
+  <require from="./image-selection"></require>
+
+  <nav class="navbar navbar-default navbar-static-top" role="navigation">
+    <a class="navbar-brand" href="#">
+      <i class="fa fa-user"></i>
+      <span>GenetiCompression</span>
+    </a>
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li class="nav-item ${!api.sourceLoaded ? 'disabled' : ''}">
+          <a class="nav-link" route-href="route: population">Population</a>
+        </li>
+        <li class="nav-item ${!api.sourceLoaded ? 'disabled' : ''}">
+          <a class="nav-link" route-href="route: advanced">Advanced Settings</a>
+        </li>
+      </ul>
     </div>
-    <div>
-        <h2>Compression</h2>
-        <img id="source_image" src.bind="sourceImage | canvasToUrl">
-        <img id="current_best">
-        <ul>
-            <li repeat.for="image of images">
-                <label>Image ${$index}</label>
-                <img src.bind="image.canvas | canvasToUrl">
-                <h3>${image.dumpFormula ()}</h3>
-            </li>
-        </ul>
+  </nav>
+  <div class="container">
+    <div class="row">
+      <image-selection class="col-md-4"></image-selection>
+      <router-view class="col-md-8"></router-view>
     </div>
-    <!--<img src.bind="URL.createObjectURL(selectedFiles.item(0))" width="128" height="128">-->
+  </div>
+
 </template>

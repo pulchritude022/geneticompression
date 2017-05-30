@@ -1,0 +1,26 @@
+<template>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      Source Image Selection
+    </div>
+    <div class="panel-body">
+      <!--<input type="file"  change.delegate="onFilesSelected($event)" class="form-control">-->
+      <div class="text-center">
+        <span if.bind="!api.sourceLoaded" class="no-image-text">No image selected.</span>
+        <img class="img-thumbnail" if.bind="api.sourceLoaded" src.bind="api.sourceImgUrl">
+      </div>
+      <div class="text-center">
+        <label class="btn btn-default btn-file">
+          Browse <input type="file" change.delegate="onFilesSelected($event)" style="display: none; margin: 20em;">
+        </label>
+      </div>
+    </div>
+    <div class="panel-footer">
+      <div class="text-center">
+        <button type="button" class="btn btn-primary" click.delegate="onStart ()">Start</button>
+        <button type="button" class="btn btn-default">Pause</button>
+        <button type="button" class="btn btn-danger">Reset</button>
+      </div>
+    </div>
+  </div>
+</template>

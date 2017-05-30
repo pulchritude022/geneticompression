@@ -1,0 +1,21 @@
+
+.no-image-text {
+  line-height: 1000%;
+}
+
+.panel-body {
+  min-height: 30em;
+  max-height: 30em;
+  overflow-y: auto;
+}
+
+.population-image {
+  width: 140px;
+  height: 140px;
+}
+
+.population-viewer {
+  float: left;
+  margin: .5em;
+  max-width: 160px;
+}

@@ -1,6 +1,7 @@
 /**
  * Created by amccollough on 5/23/17.
  */
+let math = require('mathjs');
 
 const OP_VAL = 0;
 const OP_X = 1;
@@ -39,6 +40,97 @@ export class Phenotype {
 
         this.canvas.width = width;
         this.canvas.height = height;
+
+      this.nodeR = this._getRandomEquation (0);
+      this.nodeG = this._getRandomEquation (1);
+      this.nodeB = this._getRandomEquation (1);
+
+      this.match = 0; // current match strength against source image, range 0..1
+    }
+
+    _getRandomEquation (numOps) {
+      let rootNode = this._getRandomConstNode();
+      if (numOps >= 1) {
+        rootNode = this._getRandomOperatorNode ();
+
+        for (let i = 1; i < numOps; i++) {
+          let nodes = rootNode.filter((node) => {return node.isSymbolNode || node.isConstantNode;});
+          let replacedNode = math.pickRandom(nodes);
+          rootNode.transform ((node, path, parent) => {
+            if (node.equals(replacedNode)) {
+              return this._getRandomOperatorNode ();
+            }
+            else {
+              return node;
+            }
+          });
+
+          return rootNode;
+        }
+      }
+      return rootNode;
+    }
+
+    _getRandomConstNode () {
+      const VALUE_WEIGHT = 1;
+      const CONST_WEIGHT = 1;
+      if (Math.random () < (VALUE_WEIGHT/(VALUE_WEIGHT+CONST_WEIGHT))) {
+        // Create a value node
+        const X_WEIGHT = 1;
+        const Y_WEIGHT = 1;
+        return (Math.random () < (X_WEIGHT/(X_WEIGHT+Y_WEIGHT))) ?
+          new math.expression.node.SymbolNode ('x') :
+          new math.expression.node.SymbolNode ('y');
+      }
+      else {
+        // Create a constant node using a rough approximation of a std distribution centered around 0
+        const MAX_CONST = 20;
+        return new math.expression.node.ConstantNode(math.round ((((Math.random() + Math.random() + Math.random() + Math.random()) - 2) / 2) * MAX_CONST, 2));
+      }
+    }
+
+    _getRandomOperatorNode () {
+      let a = this._getRandomConstNode ();
+      let b = this._getRandomConstNode ();
+      let weightedOperations = [
+        {w: 5, args: ['add', [a, b]] },
+        {w: 5, args: ['subtract', [a, b]] },
+        {w: 5, args: ['multiply', [a, b]] },
+        {w: 5, args: ['divide', [a, b]] },
+        {w: 3, args: ['pow', [a, b]] },
+        {w: 1, args: ['abs', [a]] },
+        {w: 2, args: ['cube', [a]] },
+        {w: 1, args: ['exp', [a]] },
+        {w: 1, args: ['log', [a, b]] },
+        {w: 1, args: ['pow', [a, b]] },
+        {w: 1, args: ['sign', [a]] },
+        {w: 2, args: ['sqrt', [a]] },
+        {w: 2, args: ['square', [a]] },
+        {w: 1, args: ['unaryMinus', [a]] },
+        {w: 2, args: ['sin', [a]] },
+        {w: 2, args: ['cos', [a]] },
+        {w: 2, args: ['tan', [a]] },
+        {w: 2, args: ['asin', [a]] },
+        {w: 2, args: ['acos', [a]] },
+        {w: 2, args: ['atan', [a]] },
+        {w: 2, args: ['sinh', [a]] },
+        {w: 2, args: ['cosh', [a]] },
+        {w: 2, args: ['tanh', [a]] },
+      ];
+      let args = math.pickRandom(weightedOperations, weightedOperations.map ((x) => {return x.w;})).args;
+      return new math.expression.node.FunctionNode(...args);
+    }
+
+    _getRandomFunctionNode () {
+      let a = this._getRandomConstNode ();
+      switch (this._getRandomNumber()) {
+
+      }
+    }
+
+    _getRandomNumber (max) {
+      max = Math.floor(max);
+      return Math.floor (Math.random () * max);
     }
 
     dumpFormula () {
@@ -51,9 +143,12 @@ export class Phenotype {
 
     getRGBAForumlas () {
         return [
-            this.treeR.getFormula(),
-            this.treeG.getFormula(),
-            this.treeB.getFormula(),
+            // this.treeR.getFormula(),
+            // this.treeG.getFormula(),
+            // this.treeB.getFormula(),
+            this.nodeR.toString(),
+            this.nodeG.toString(),
+            this.nodeB.toString(),
             "255"
         ];
     }
@@ -64,10 +159,13 @@ export class Phenotype {
 
         let R, G, B, A;
         [R, G, B, A] = this.getRGBAForumlas ();
-        let eqR = math.compile(R);
-        let eqG = math.compile(G);
-        let eqB = math.compile(B);
-        let eqA = math.compile(A);
+        // let eqR = math.compile(R);
+        // let eqG = math.compile(G);
+        // let eqB = math.compile(B);
+        // let eqA = math.compile(A);
+        let eqR = this.nodeR.compile ();
+        let eqG = this.nodeG.compile ();
+        let eqB = this.nodeB.compile ();
 
         for (var y = 0; y < this.canvas.height; y++)
         {
@@ -91,18 +189,18 @@ export class Phenotype {
         return this.canvas;
     }
 
-    compareCanvas (canvas) {
+    // return 0..1 -- 1 is perfect match, 0 is no match
+    comparePixels (sourceData) {
         let ctx1 = math.matrix(Array.from (this.canvas.getContext("2d").getImageData(0, 0, this.canvas.width, this.canvas.height).data));
-        let ctx2 = math.matrix(Array.from (canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data));
-        console.log(`${math.subset(ctx1, math.index(math.range(80000,80008)))} ${math.subset(ctx2, math.index(math.range(80000,80016)))}`);
-        // math.multiply(ctx1, -1);
-        // console.log(`${math.subset(ctx1, math.index(math.range(80000,80008)))} ${math.subset(ctx2, math.index(math.range(80000,80008)))}`);
+        let ctx2 = math.matrix(sourceData);
+          // console.log(`${math.subset(ctx1, math.index(math.range(80000,80008)))} ${math.subset(ctx2, math.index(math.range(80000,80016)))}`);
         ctx1 = math.subtract(ctx1, ctx2);
-        console.log(`${math.subset(ctx1, math.index(math.range(80000,80008)))} ${math.subset(ctx2, math.index(math.range(80000,80008)))}`);
+          // console.log(`${math.subset(ctx1, math.index(math.range(80000,80008)))} ${math.subset(ctx2, math.index(math.range(80000,80008)))}`);
         ctx1 = math.dotMultiply(ctx1, ctx1);
-        console.log(`${math.subset(ctx1, math.index(math.range(80000,80008)))} ${math.subset(ctx2, math.index(math.range(80000,80008)))}`);
-        console.log(`${math.sum(ctx1)} ${math.size(ctx1).get([0])}`);
-        return math.sum(ctx1)/math.size(ctx1).get([0]);
+          // console.log(`${math.subset(ctx1, math.index(math.range(80000,80008)))} ${math.subset(ctx2, math.index(math.range(80000,80008)))}`);
+          // console.log(`${math.sum(ctx1)} ${math.size(ctx1).get([0])}`);
+        this.match = 1-((math.sum(ctx1)/math.size(ctx1).get([0]))/(255*255)) ;
+        return this.match;
     }
 }
 

@@ -1,0 +1,17 @@
+<template>
+  <require from="./canvas-to-url"></require>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">Compression</div>
+    <div class="panel-body">
+      <div if.bind="!api.sourceLoaded" class="text-center">
+        <span class="no-image-text">${noImageMessage}</span>
+      </div>
+      <div if.bind="api.sourceLoaded">
+        <div class="text-center">
+          <img src.bind="population[0].canvas | canvasToUrl" class="img-thumbnail">
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

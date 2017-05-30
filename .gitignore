@@ -1,1 +1,4 @@
-.idea/
+node_modules
+sample_img
+.idea
+.DS_STORE
