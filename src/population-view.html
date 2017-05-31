@@ -5,7 +5,7 @@
     <div class="panel-heading">Phenotype Population</div>
     <div class="panel-body">
       <div class="thumbnail population-viewer" repeat.for="phenotype of population">
-        <img class="population-image" src.bind="phenotype.canvas | canvasToUrl">
+        <img class="population-image" src.bind="phenotype.url">
         <div class="caption text-center">
           <p>Image ${$index}: ${(phenotype.match * 100).toFixed(2)}%</p>
           <!--<p>${phenotype.dumpFormula ()}</p>-->

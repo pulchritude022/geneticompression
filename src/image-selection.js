@@ -3,7 +3,7 @@
  */
 import {inject} from 'aurelia-framework'
 import {EventAggregator} from 'aurelia-event-aggregator'
-import {MsgNewSourceImage} from './messages'
+import {MsgNewSourceImage, MsgReset} from './messages'
 import {DataApi} from './data-api'
 
 @inject(DataApi, EventAggregator)
@@ -20,7 +20,12 @@ export class ImageSelection {
   }
 
   onStart () {
-    console.log ("Started!");
+    console.log ("Start Clicked!!");
+  }
+
+  onReset () {
+    console.log ("Reset Clicked!");
+    this.ea.publish (new MsgReset ());
   }
 
 }

@@ -10,6 +10,8 @@ export class MsgNewSourceImage {
 
 export class MsgSourceImageLoaded {}
 
+export class MsgReset {}
+
 export class MsgIterate {
 
 }

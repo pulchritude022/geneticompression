@@ -5,10 +5,11 @@ import {Phenotype} from './phenotype'
 
 const INITIAL_POP_COUNT = 12;
 
+let popSize = INITIAL_POP_COUNT;
 let sourceImageData = [];
 let phenotypes = [];
 
-for (let i=0; i < INITIAL_POP_COUNT; i++) {
+for (let i=0; i < popSize; i++) {
   let pheno = new Phenotype(300,300);
   pheno.updateCanvas();
   phenotypes.push(pheno)
@@ -57,7 +58,40 @@ export class DataApi {
     if (sourceImageData.length > 0){
       phenotypes.forEach((currentValue, index, array) => {
         console.log(index, currentValue.comparePixels(sourceImageData));
-      })
+      });
+      phenotypes.sort((a,b) => {
+        if (a.match > b.match) {
+          return -1;
+        }
+        else if (a.match < b.match) {
+          return 1;
+        }
+        return 0;
+      });
+    }
+  }
+
+  resetPhenotypes () {
+    phenotypes.forEach((p) => {
+      p.randomize();
+      p.updateCanvas();
+    });
+  }
+
+  getPopSize () {
+    return popSize;
+  }
+
+  setPopSize (size) {
+    // Only need to update if there is a change
+    if (size != popSize) {
+      // Regenerate the population by first emptying population array
+      phenotypes = [];
+      for (let i=0; i < popSize; i++) {
+        let pheno = new Phenotype(300,300);
+        pheno.updateCanvas();
+        phenotypes.push(pheno);
+      }
     }
   }
 }
