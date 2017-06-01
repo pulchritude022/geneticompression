@@ -1,4 +1,3 @@
-
 import {inject} from 'aurelia-framework'
 import {DataApi} from './data-api'
 
