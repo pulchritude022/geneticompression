@@ -8,9 +8,29 @@
         <span class="no-image-text">${noImageMessage}</span>
       </div>
       <div if.bind="api.sourceLoaded">
-        <div class="text-center">
-          <img src.bind="population[0].url" class="img-thumbnail">
-          <h2>Pixel Match: ${(population[0].match * 100).toFixed(2)}%</h2>
+        <div class="text-center col-md-8">
+          <img src.bind="bestMatch.url & signal: 'need-update'" class="img-thumbnail">
+          <h2>Pixel Match: ${(bestMatch.match * 100).toFixed(2)}%</h2>
+        </div>
+        <div class="list-group col-md-4">
+          <div class="list-group-item list-group-item-action flex-column align-items-start">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Red Value Equation</h5>
+            </div>
+            <p>${bestMatch.getFormula("R")}</p>
+          </div>
+          <div class="list-group-item list-group-item-action flex-column align-items-start">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Green Value Equation</h5>
+            </div>
+            <p>${bestMatch.getFormula("G")}</p>
+          </div>
+          <div class="list-group-item list-group-item-action flex-column align-items-start">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Blue Value Equation</h5>
+            </div>
+            <p>${bestMatch.getFormula("B")}</p>
+          </div>
         </div>
       </div>
     </div>

@@ -29,6 +29,18 @@ export class Phenotype {
     //
   }
 
+  getFormula (channel) {
+    switch (channel) {
+      case "R":
+        return this.nodeR.toString();
+      case "G":
+        return this.nodeG.toString();
+      case "B":
+        return this.nodeB.toString();
+    }
+    return "";
+  }
+
   dumpFormula () {
     let R, G, B, A;
     [R, G, B, A] = this.getRGBAForumlas ();

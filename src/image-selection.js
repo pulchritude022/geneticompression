@@ -15,11 +15,15 @@ export class ImageSelection {
 
   onFilesSelected (event) {
     let img = event.target.files[0];
-    this.api.loadSourceImg (img);
-    this.ea.publish (new MsgNewSourceImage (img));
+    this.api.loadSourceImg (img).then (() => {
+      this.ea.publish (new MsgNewSourceImage (img));
+    });
+
   }
 
   onStart () {
+    // TODO: Complete genetic algorithm processing
+    // Currently no behavior
     console.log ("Start Clicked!!");
   }
 

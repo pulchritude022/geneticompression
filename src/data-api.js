@@ -24,30 +24,35 @@ export class DataApi {
     this.sourceImgUrl = "";
   }
 
+  // Returns a promise that resolves upon completion of the load
   loadSourceImg (img){
-    if (img) {
-      console.log(URL.createObjectURL(img));
-      this.sourceImgUrl = URL.createObjectURL(img);
-      this.sourceLoaded = true;
+    return new Promise ((resolve, reject) => {
+      if (img) {
+        console.log(URL.createObjectURL(img));
+        this.sourceImgUrl = URL.createObjectURL(img);
+        this.sourceLoaded = true;
 
-      // Save off the Image data by transforming into a temporary canvas
-      let sourceCanvas = document.createElement("canvas");
-      sourceCanvas.width = 300;
-      sourceCanvas.height = 300;
-      let tempImage = new Image (300,300);
-      tempImage.src = this.sourceImgUrl;
-      tempImage.onload = () => {
-        console.log("Loaded!");
-        sourceCanvas.getContext('2d').drawImage(tempImage, 0, 0);
-        sourceImageData = Array.from (sourceCanvas.getContext('2d').getImageData(0,0,300,300).data);
-        this.evaluatePhenotypes();
-      };
+        // Save off the Image data by transforming into a temporary canvas
+        let sourceCanvas = document.createElement("canvas");
+        sourceCanvas.width = 300;
+        sourceCanvas.height = 300;
+        let tempImage = new Image (300,300);
+        tempImage.src = this.sourceImgUrl;
+        tempImage.onload = () => {
+          console.log("Loaded!");
+          sourceCanvas.getContext('2d').drawImage(tempImage, 0, 0);
+          sourceImageData = Array.from (sourceCanvas.getContext('2d').getImageData(0,0,300,300).data);
+          this.evaluatePhenotypes();
+          resolve();
+        };
 
-    }
-    else {
-      this.sourceImgUrl = "";
-      this.sourceLoaded = false;
-    }
+      }
+      else {
+        this.sourceImgUrl = "";
+        this.sourceLoaded = false;
+        reject("Invalid Image");
+      }
+    });
   }
 
   getPhenotypes () {
@@ -58,7 +63,7 @@ export class DataApi {
   evaluatePhenotypes () {
     if (sourceImageData.length > 0){
       phenotypes.forEach((currentValue, index, array) => {
-        console.log(index, currentValue.comparePixels(sourceImageData));
+        currentValue.comparePixels(sourceImageData);
       });
       phenotypes.sort((a,b) => {
         if (a.match > b.match) {
@@ -69,6 +74,7 @@ export class DataApi {
         }
         return 0;
       });
+      console.log ("Phenotypes Evaluated");
     }
   }
 
@@ -96,6 +102,7 @@ export class DataApi {
         pheno.updateCanvas();
         phenotypes.push(pheno);
       }
+      this.evaluatePhenotypes();
       return true;  // we updated the population size
     }
     return false; // no change was made
