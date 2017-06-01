@@ -2,9 +2,19 @@
   <div class="panel panel-default">
     <div class="panel-heading">Advanced Settings</div>
     <div class="panel-body">
-      <div class="text-center">
-        <h3>Advanced Settings Placeholder!</h3>
-      </div>
+      <form>
+        <div class="form-group">
+          <label for="populationSize">Population Size</label>
+          <input type="number" class="form-control" id="populationSize" aria-describedby="populationSizeHelp" value.bind="populationSize">
+          <small id="populationSizeHelp" class="form-text text-muted">Choose a population size. Recommended less than 20.</small>
+        </div>
+        <div class="form-group">
+          <label for="mutationRate">Mutation Rate</label>
+          <input type="number" class="form-control" id="mutationRate" min=0 max=1 step=0.01 aria-describedby="mutationRateHelp" value.bind="mutationRate">
+          <small id="mutationRateHelp" class="form-text text-muted">Choose a mutation rate. The larger the mutation rate, the more chaotic and unstable the evolution will become.</small>
+        </div>
+        <button type="submit" class="btn btn-primary" click.delegate="saveSettings()">Save Settings</button>
+      </form>
     </div>
   </div>
 </template>

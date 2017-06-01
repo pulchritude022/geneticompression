@@ -6,6 +6,7 @@ import {Phenotype} from './phenotype'
 const INITIAL_POP_COUNT = 12;
 
 let popSize = INITIAL_POP_COUNT;
+let mutationRate = 0.05;
 let sourceImageData = [];
 let phenotypes = [];
 
@@ -15,7 +16,6 @@ for (let i=0; i < popSize; i++) {
   phenotypes.push(pheno)
 }
 
-let mutationRate = 5;
 
 
 export class DataApi {
@@ -54,6 +54,7 @@ export class DataApi {
     return phenotypes;
   }
 
+  // Re-calculate the fitness function for each phenotype
   evaluatePhenotypes () {
     if (sourceImageData.length > 0){
       phenotypes.forEach((currentValue, index, array) => {
@@ -71,6 +72,7 @@ export class DataApi {
     }
   }
 
+  // Re-randomize each phenotype
   resetPhenotypes () {
     phenotypes.forEach((p) => {
       p.randomize();
@@ -85,6 +87,8 @@ export class DataApi {
   setPopSize (size) {
     // Only need to update if there is a change
     if (size != popSize) {
+      popSize = size;
+      console.log (`New Population size ${popSize}`);
       // Regenerate the population by first emptying population array
       phenotypes = [];
       for (let i=0; i < popSize; i++) {
@@ -92,7 +96,22 @@ export class DataApi {
         pheno.updateCanvas();
         phenotypes.push(pheno);
       }
+      return true;  // we updated the population size
     }
+    return false; // no change was made
+  }
+
+  getMutationRate () {
+    return mutationRate;
+  }
+
+  setMutationRate (rate) {
+    if (rate != mutationRate) {
+      mutationRate = rate;
+      console.log (`New Mutation Rate ${mutationRate}`);
+      return true;// we updated the mutation rate
+    }
+    return false; // no change was made
   }
 }
 
